@@ -1,0 +1,52 @@
+@model List<Producto>
+@{
+    ViewData["Title"] = "Productos";
+}
+
+<div class="page-head">
+    <h1>Productos</h1>
+    <a class="btn btn-brand" asp-action="Create">Nuevo producto</a>
+</div>
+
+<section class="card">
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th><th>Categoría</th><th>Proveedor</th>
+                    <th class="num">Precio</th><th class="num">Stock</th><th>Estado</th><th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model)
+                {
+                    <tr>
+                        <td>@p.Nombre</td>
+                        <td>@p.Categoria?.Nombre</td>
+                        <td>@p.Proveedor?.Nombre</td>
+                        <td class="num">@Money.Fmt(p.Precio)</td>
+                        <td class="num">@p.Stock</td>
+                        <td><span class="status @(p.Activo ? "ok" : "muted-s")">@(p.Activo ? "Activo" : "Inactivo")</span></td>
+                        <td>
+                            <div class="actions">
+                                <a class="small" asp-action="Edit" asp-route-id="@p.Id">Editar</a>
+                                @if (p.Activo)
+                                {
+                                    <form asp-action="Desactivar" asp-route-id="@p.Id" method="post" class="inline">
+                                        <button type="submit" class="link-btn small">Desactivar</button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form asp-action="Activar" asp-route-id="@p.Id" method="post" class="inline">
+                                        <button type="submit" class="link-btn small">Activar</button>
+                                    </form>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>

@@ -1,0 +1,56 @@
+@model CatalogoVm
+@{
+    ViewData["Title"] = "Catálogo";
+}
+
+<h1>Catálogo</h1>
+
+<div class="chips">
+    <a class="chip @(Model.CategoriaId is null ? "active" : "")" asp-action="Index" asp-route-q="@Model.Q">Todos</a>
+    @foreach (var c in Model.Categorias)
+    {
+        <a class="chip @(Model.CategoriaId == c.Id ? "active" : "")" asp-action="Index" asp-route-categoria="@c.Id" asp-route-q="@Model.Q">@c.Nombre</a>
+    }
+</div>
+
+<form method="get" class="search">
+    @if (Model.CategoriaId is int cat)
+    {
+        <input type="hidden" name="categoria" value="@cat" />
+    }
+    <input type="search" name="q" value="@Model.Q" placeholder="Buscar producto" aria-label="Buscar producto" />
+    <button type="submit" class="btn btn-outline">Buscar</button>
+</form>
+
+@if (Model.Productos.Count == 0)
+{
+    <p class="muted">No hay productos con estos filtros.</p>
+}
+
+<div class="product-grid">
+    @foreach (var p in Model.Productos)
+    {
+        <article class="card product reveal">
+            <a asp-action="Detalle" asp-route-id="@p.Id" class="product-img">
+                @if (p.ImagenUrl is not null)
+                {
+                    <img src="@p.ImagenUrl" alt="@p.Nombre" loading="lazy" />
+                }
+                else
+                {
+                    <span>Imagen del producto</span>
+                }
+            </a>
+            <h3 class="product-name">@p.Nombre</h3>
+            <p class="tag">@p.Categoria?.Nombre</p>
+            <p class="muted small">@p.Descripcion</p>
+            <p class="price">@Money.Fmt(p.Precio)</p>
+            <p class="stock @(p.Stock == 0 ? "out" : p.Stock <= Negocio.StockBajo ? "low" : "")">Stock: @p.Stock</p>
+            <form asp-action="AgregarAlCarrito" method="post">
+                <input type="hidden" name="productoId" value="@p.Id" />
+                <input type="hidden" name="cantidad" value="1" />
+                <button type="submit" class="btn btn-outline btn-block" disabled="@(p.Stock == 0)">Añadir al carrito</button>
+            </form>
+        </article>
+    }
+</div>

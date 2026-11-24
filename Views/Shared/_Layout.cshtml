@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es" class="no-js">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] · Bellas Boutique</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:wght@500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+@{
+    var autenticado = User.Identity?.IsAuthenticated == true;
+    var personal = User.IsInRole(Roles.Vendedor) || User.IsInRole(Roles.Administrador);
+    var admin = User.IsInRole(Roles.Administrador);
+}
+<body data-auth="@(autenticado ? "true" : "false")"
+      data-staff="@(personal ? "true" : "false")"
+      data-user-id="@(autenticado ? User.UsuarioId() : 0)">
+
+@if (autenticado)
+{
+    <header class="topbar">
+        <div class="container topbar-inner">
+            <a class="brand" asp-controller="@(personal ? "Gestion" : "Cliente")" asp-action="Dashboard">Bellas Boutique</a>
+            <nav class="nav" aria-label="Principal">
+                @if (personal)
+                {
+                    <a asp-controller="Gestion" asp-action="Dashboard">Dashboard</a>
+                    <a asp-controller="Productos" asp-action="Index">Productos</a>
+                    <a asp-controller="Productos" asp-action="Inventario">Inventario</a>
+                    <a asp-controller="Gestion" asp-action="Reportes">Reportes</a>
+                    <a asp-controller="Chat" asp-action="Index">Chat<span id="chat-badge" class="badge" hidden>0</span></a>
+                    @if (admin)
+                    {
+                        <a asp-controller="Admin" asp-action="Usuarios">Usuarios</a>
+                        <a asp-controller="Admin" asp-action="Bitacora">Bitácora</a>
+                        <a asp-controller="Admin" asp-action="Retroalimentacion">Retroalimentación</a>
+                    }
+                }
+                else
+                {
+                    <a asp-controller="Cliente" asp-action="Dashboard">Inicio</a>
+                    <a asp-controller="Catalogo" asp-action="Index">Catálogo</a>
+                    <a asp-controller="Soporte" asp-action="Index">Soporte</a>
+                    <a asp-controller="Carrito" asp-action="Index">Carrito</a>
+                }
+                <a asp-controller="Account" asp-action="Perfil">Mi perfil</a>
+                <form id="logoutForm" class="inline" asp-controller="Account" asp-action="Logout" method="post">
+                    <button type="submit" class="link-btn">Cerrar sesión</button>
+                </form>
+            </nav>
+        </div>
+    </header>
+}
+
+<main class="container">
+    @if (TempData["Ok"] is string ok)
+    {
+        <div class="alert alert-ok" role="status">@ok</div>
+    }
+    @if (TempData["Error"] is string error)
+    {
+        <div class="alert alert-error" role="alert">@error</div>
+    }
+    @RenderBody()
+</main>
+
+@if (ViewData["ModalError"] is string modalError)
+{
+    <div class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-card">
+            <h2 id="modal-title" class="modal-title">@(ViewData["ModalTitle"] as string ?? "Error")</h2>
+            <p>@modalError</p>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-brand" data-close-modal>Aceptar</button>
+            </div>
+        </div>
+    </div>
+}
+
+@if (autenticado)
+{
+    <div id="sesion-aviso" class="modal-overlay" hidden role="alertdialog" aria-modal="true" aria-labelledby="sesion-titulo">
+        <div class="modal-card">
+            <h2 id="sesion-titulo" class="modal-title">Su sesión está por cerrarse</h2>
+            <p>Por inactividad, la sesión se cerrará en <strong id="sesion-segundos">60</strong> segundos.</p>
+            <div class="modal-actions">
+                <button id="sesion-seguir" type="button" class="btn btn-brand">Seguir conectado</button>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@@8.0.7/dist/browser/signalr.min.js"></script>
+}
+
+<script src="~/js/site.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

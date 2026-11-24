@@ -1,0 +1,35 @@
+@model LoginVm
+@{
+    ViewData["Title"] = "Iniciar sesión";
+    Layout = "_AuthLayout";
+}
+
+<section class="card auth-card">
+    <h1>Iniciar sesión</h1>
+    <p class="muted small">Ingrese con su correo electrónico y contraseña.</p>
+
+    @if (ViewData["Timeout"] is true)
+    {
+        <div class="alert alert-info">Su sesión se cerró por inactividad.</div>
+    }
+
+    <form asp-action="Login" method="post" novalidate>
+        <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
+        <div class="field">
+            <label asp-for="Email">Correo electrónico</label>
+            <input asp-for="Email" placeholder="correo@ejemplo.com" autocomplete="username" />
+            <span asp-validation-for="Email" class="field-error"></span>
+        </div>
+
+        <div class="field">
+            <label asp-for="Password">Contraseña</label>
+            <input asp-for="Password" type="password" placeholder="••••••••" autocomplete="current-password" />
+            <span asp-validation-for="Password" class="field-error"></span>
+        </div>
+
+        <p class="helper"><a asp-action="Recuperar">¿Olvidó su contraseña?</a></p>
+        <button type="submit" class="btn btn-brand btn-block">Ingresar</button>
+        <p class="muted small center" style="margin-top:16px">¿No tiene cuenta? <a asp-action="Registro">Regístrese</a></p>
+    </form>
+</section>

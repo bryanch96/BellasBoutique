@@ -1,0 +1,75 @@
+@model ReporteVm
+@{
+    ViewData["Title"] = Model.Titulo;
+}
+
+<div class="page-head">
+    <div>
+        <h1>@Model.Titulo</h1>
+        <p class="muted small" style="margin:0">Período: @Model.Periodo</p>
+    </div>
+    <div class="actions">
+        <a class="btn btn-outline btn-sm" asp-action="Reportes" asp-route-tipo="diario">Diario</a>
+        <a class="btn btn-outline btn-sm" asp-action="Reportes" asp-route-tipo="mensual">Mensual</a>
+    </div>
+</div>
+
+<form method="get" class="card filters" style="margin-bottom:22px">
+    <input type="hidden" name="tipo" value="@Model.Tipo" />
+    @if (Model.Tipo == "mensual")
+    {
+        <div class="field"><label for="anio">Año</label><input id="anio" type="number" name="anio" min="2000" max="2100" value="@DateTime.Today.Year" /></div>
+        <div class="field"><label for="mes">Mes</label><input id="mes" type="number" name="mes" min="1" max="12" value="@DateTime.Today.Month" /></div>
+    }
+    else
+    {
+        <div class="field"><label for="fecha">Fecha</label><input id="fecha" type="date" name="fecha" value="@DateTime.Today.ToString("yyyy-MM-dd")" /></div>
+    }
+    <button type="submit" class="btn btn-brand">Ver reporte</button>
+</form>
+
+<div class="tiles">
+    <div class="card tile"><div class="label">Productos vendidos</div><div class="value">@Model.TotalUnidades</div></div>
+    <div class="card tile"><div class="label">Ingresos</div><div class="value">@Money.Fmt(Model.TotalIngresos)</div></div>
+    <div class="card tile"><div class="label">Productos distintos</div><div class="value">@Model.Filas.Count</div></div>
+    <div class="card tile"><div class="label">Con stock bajo</div><div class="value">@Model.BajoStock.Count</div></div>
+</div>
+
+<section class="card">
+    <h2 class="h3">Detalle por producto</h2>
+    @if (Model.Filas.Count == 0)
+    {
+        <p class="muted">Sin ventas en este período.</p>
+    }
+    else
+    {
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Producto</th><th class="num">Unidades</th><th class="num">Ingresos</th></tr></thead>
+                <tbody>
+                    @foreach (var f in Model.Filas)
+                    {
+                        <tr><td>@f.Nombre</td><td class="num">@f.Unidades</td><td class="num">@Money.Fmt(f.Ingresos)</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</section>
+
+<section class="card" style="margin-top:18px">
+    <h2 class="h3">Productos con stock bajo</h2>
+    @if (Model.BajoStock.Count == 0)
+    {
+        <p class="muted">Ningún producto con stock bajo.</p>
+    }
+    else
+    {
+        <ul class="list">
+            @foreach (var p in Model.BajoStock)
+            {
+                <li><span>@p.Nombre</span><span class="status @(p.Stock == 0 ? "out" : "low")">Stock: @p.Stock</span></li>
+            }
+        </ul>
+    }
+</section>

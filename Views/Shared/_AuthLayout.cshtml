@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es" class="no-js">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] · Bellas Boutique</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:wght@500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="auth-body" data-auth="false" data-staff="false" data-user-id="0">
+<main class="auth-wrap">
+    <div class="auth-brand">Bellas Boutique</div>
+
+    @if (TempData["Ok"] is string ok)
+    {
+        <div class="alert alert-ok auth-card" role="status">@ok</div>
+    }
+
+    @RenderBody()
+</main>
+
+@if (ViewData["ModalError"] is string modalError)
+{
+    <div class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-card">
+            <h2 id="modal-title" class="modal-title">@(ViewData["ModalTitle"] as string ?? "Error")</h2>
+            <p>@modalError</p>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-brand" data-close-modal>Aceptar</button>
+            </div>
+        </div>
+    </div>
+}
+
+<script src="~/js/site.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

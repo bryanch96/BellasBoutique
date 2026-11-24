@@ -1,0 +1,60 @@
+@model RegistroVm
+@{
+    ViewData["Title"] = "Registro";
+    Layout = "_AuthLayout";
+}
+
+<section class="card auth-card wide">
+    <h1>Crear cuenta</h1>
+
+    <form asp-action="Registro" method="post" novalidate>
+        <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
+        <div class="grid-2">
+            <div class="field">
+                <label asp-for="Cedula">Cédula</label>
+                <input asp-for="Cedula" placeholder="1-1234-5678" />
+                <span asp-validation-for="Cedula" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Nombre">Nombre completo</label>
+                <input asp-for="Nombre" placeholder="Nombre" />
+                <span asp-validation-for="Nombre" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Apellidos">Apellidos</label>
+                <input asp-for="Apellidos" placeholder="Apellidos" />
+                <span asp-validation-for="Apellidos" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Email">Correo electrónico</label>
+                <input asp-for="Email" placeholder="correo@ejemplo.com" autocomplete="username" />
+                <span asp-validation-for="Email" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Telefono">Teléfono</label>
+                <input asp-for="Telefono" placeholder="8888-8888" />
+                <span asp-validation-for="Telefono" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Direccion">Dirección</label>
+                <input asp-for="Direccion" placeholder="Provincia, cantón, distrito" />
+                <span asp-validation-for="Direccion" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Password">Contraseña</label>
+                <input asp-for="Password" type="password" data-pass-check autocomplete="new-password" />
+                <span asp-validation-for="Password" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="ConfirmarPassword">Confirmar contraseña</label>
+                <input asp-for="ConfirmarPassword" type="password" autocomplete="new-password" />
+                <span asp-validation-for="ConfirmarPassword" class="field-error"></span>
+            </div>
+        </div>
+
+        <ul class="rules" data-pass-rules aria-live="polite"></ul>
+        <button type="submit" class="btn btn-brand btn-block">Registrarse</button>
+        <p class="muted small center" style="margin-top:16px">¿Ya tiene cuenta? <a asp-action="Login">Inicie sesión</a></p>
+    </form>
+</section>

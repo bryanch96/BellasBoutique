@@ -1,0 +1,75 @@
+@model PagoVm
+@{
+    ViewData["Title"] = "Pago";
+}
+
+<h1>Pago</h1>
+
+<form asp-action="Index" method="post" novalidate class="two-col">
+    <section class="card">
+        <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
+        <h2 class="h3">Dirección de entrega</h2>
+        <div class="field">
+            <label asp-for="Direccion">Dirección</label>
+            <input asp-for="Direccion" placeholder="Provincia, cantón, distrito, otras señas" />
+            <span asp-validation-for="Direccion" class="field-error"></span>
+        </div>
+
+        <h2 class="h3" style="margin-top:24px">Método de pago</h2>
+        <label class="radio-card">
+            <input type="radio" asp-for="Metodo" value="Tarjeta" />
+            <span><strong>Tarjeta</strong><small>Crédito o débito</small></span>
+        </label>
+        <label class="radio-card">
+            <input type="radio" asp-for="Metodo" value="SINPE" />
+            <span><strong>SINPE Móvil</strong><small>Pago desde su teléfono</small></span>
+        </label>
+        <label class="radio-card">
+            <input type="radio" asp-for="Metodo" value="Transferencia" />
+            <span><strong>Transferencia</strong><small>Transferencia bancaria</small></span>
+        </label>
+        <span asp-validation-for="Metodo" class="field-error"></span>
+
+        <div id="tarjeta-campos" class="card-fields">
+            <div class="field">
+                <label asp-for="NombreTarjeta">Nombre en la tarjeta</label>
+                <input asp-for="NombreTarjeta" placeholder="Nombre completo" autocomplete="cc-name" />
+                <span asp-validation-for="NombreTarjeta" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="NumeroTarjeta">Número de tarjeta</label>
+                <input asp-for="NumeroTarjeta" placeholder="0000 0000 0000 0000" inputmode="numeric" autocomplete="cc-number" />
+                <span asp-validation-for="NumeroTarjeta" class="field-error"></span>
+            </div>
+            <div class="grid-2">
+                <div class="field">
+                    <label asp-for="Vencimiento">Vencimiento</label>
+                    <input asp-for="Vencimiento" placeholder="MM/AA" autocomplete="cc-exp" />
+                    <span asp-validation-for="Vencimiento" class="field-error"></span>
+                </div>
+                <div class="field">
+                    <label asp-for="Cvv">Código de seguridad</label>
+                    <input asp-for="Cvv" placeholder="CVV" inputmode="numeric" autocomplete="cc-csc" />
+                    <span asp-validation-for="Cvv" class="field-error"></span>
+                </div>
+            </div>
+            <p class="helper">Los datos de la tarjeta no se guardan. Use una terminada en 0002 para simular un pago fallido.</p>
+        </div>
+    </section>
+
+    <aside class="card">
+        <h2>Resumen del pedido</h2>
+        @foreach (var item in Model.Carrito.Items)
+        {
+            <div class="sum-row">
+                <span>@item.Producto!.Nombre x@item.Cantidad</span>
+                <span>@Money.Fmt(item.Producto.Precio * item.Cantidad)</span>
+            </div>
+        }
+        <div class="sum-row" style="border-top:1px solid var(--line);margin-top:8px;padding-top:10px"><span>Subtotal</span><span>@Money.Fmt(Model.Carrito.Subtotal)</span></div>
+        <div class="sum-row"><span>Impuesto (13%)</span><span>@Money.Fmt(Model.Carrito.Impuesto)</span></div>
+        <div class="sum-row total"><span>Total</span><span>@Money.Fmt(Model.Carrito.Total)</span></div>
+        <button type="submit" class="btn btn-brand btn-block" style="margin-top:14px">Confirmar compra</button>
+    </aside>
+</form>

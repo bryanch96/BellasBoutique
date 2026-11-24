@@ -1,0 +1,45 @@
+@model List<Usuario>
+@{
+    ViewData["Title"] = "Usuarios";
+}
+
+<h1>Usuarios y roles</h1>
+<p class="muted small">Asigne roles y active o desactive cuentas.</p>
+
+<section class="card">
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr><th>ID</th><th>Nombre</th><th>Correo</th><th>Rol</th><th>Estado</th><th></th></tr>
+            </thead>
+            <tbody>
+                @foreach (var u in Model)
+                {
+                    <tr>
+                        <td>@u.IdVisible</td>
+                        <td>@u.NombreCompleto</td>
+                        <td>@u.Email</td>
+                        <td>
+                            <form asp-action="CambiarRol" method="post" class="filters">
+                                <input type="hidden" name="id" value="@u.Id" />
+                                <select name="rol" aria-label="Rol de @u.Email" style="max-width:150px">
+                                    <option value="Cliente" selected="@(u.Rol == "Cliente")">Cliente</option>
+                                    <option value="Vendedor" selected="@(u.Rol == "Vendedor")">Vendedor</option>
+                                    <option value="Administrador" selected="@(u.Rol == "Administrador")">Administrador</option>
+                                </select>
+                                <button type="submit" class="btn btn-outline btn-sm">Cambiar</button>
+                            </form>
+                        </td>
+                        <td><span class="status @(u.Activo ? "ok" : "muted-s")">@(u.Activo ? "Activa" : "Inactiva")</span></td>
+                        <td>
+                            <form asp-action="CambiarEstado" method="post">
+                                <input type="hidden" name="id" value="@u.Id" />
+                                <button type="submit" class="link-btn small">@(u.Activo ? "Desactivar" : "Activar")</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>

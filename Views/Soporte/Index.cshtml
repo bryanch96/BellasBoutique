@@ -1,0 +1,56 @@
+@model List<Faq>
+@{
+    ViewData["Title"] = "Soporte";
+}
+
+<h1>Soporte</h1>
+<p class="muted small">Preguntas frecuentes</p>
+
+<div class="two-col" style="margin-top:14px">
+    <section class="card reveal">
+        <h2 class="h3">Preguntas frecuentes</h2>
+        @foreach (var f in Model)
+        {
+            <details class="faq">
+                <summary>@f.Pregunta</summary>
+                <p>@f.Respuesta</p>
+            </details>
+        }
+    </section>
+
+    <aside>
+        <section class="card reveal" style="margin-bottom:18px">
+            <h2 class="h3">Enviar una sugerencia</h2>
+            <form asp-action="EnviarSugerencia" method="post">
+                <div class="field">
+                    <label for="sugerencia-mensaje">Mensaje</label>
+                    <textarea id="sugerencia-mensaje" name="Mensaje" maxlength="1000" required placeholder="Escriba su sugerencia para el administrador"></textarea>
+                </div>
+                <button type="submit" class="btn btn-brand btn-block">Enviar sugerencia</button>
+            </form>
+        </section>
+
+        <section class="card reveal" style="margin-bottom:18px">
+            <h2 class="h3">Encuesta de satisfacción</h2>
+            <p class="muted small">¿Qué tan satisfecho está con su compra?</p>
+            <form asp-action="EnviarEncuesta" method="post">
+                <div class="scale" role="radiogroup" aria-label="Calificación del 1 al 5">
+                    @for (int n = 1; n <= 5; n++)
+                    {
+                        <label class="pill">
+                            <input type="radio" name="Calificacion" value="@n" required />
+                            <span>@n</span>
+                        </label>
+                    }
+                </div>
+                <div class="field">
+                    <label for="encuesta-comentarios">Comentarios</label>
+                    <textarea id="encuesta-comentarios" name="Comentarios" maxlength="500" placeholder="Cuéntenos su experiencia"></textarea>
+                </div>
+                <button type="submit" class="btn btn-brand btn-block">Enviar encuesta</button>
+            </form>
+        </section>
+
+        <a class="btn btn-outline btn-block" asp-action="Chat">Abrir chat en línea</a>
+    </aside>
+</div>

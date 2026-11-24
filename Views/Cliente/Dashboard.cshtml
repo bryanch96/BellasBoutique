@@ -1,0 +1,63 @@
+@model ClienteDashboardVm
+@{
+    ViewData["Title"] = "Inicio";
+}
+
+<section class="hero reveal">
+    <h1>Bienvenida a Bellas Boutique</h1>
+    <p>Ropa, calzado y accesorios seleccionados para usted.</p>
+    <a class="btn btn-brand" asp-controller="Catalogo" asp-action="Index">Explorar catálogo</a>
+</section>
+
+<section class="trust reveal">
+    <div class="card metric"><div class="value">@Model.Anios</div><div class="label">años de experiencia</div></div>
+    <div class="card metric"><div class="value">@Model.Clientes.ToString("#,0", System.Globalization.CultureInfo.InvariantCulture).Replace(",", " ")+</div><div class="label">clientes felices</div></div>
+    <div class="card metric"><div class="value">@Model.Paises</div><div class="label">países alcanzados</div></div>
+    <div class="card metric"><div class="value">@Model.Satisfaccion%</div><div class="label">de satisfacción</div></div>
+</section>
+
+<h2 class="section-title">Productos más cotizados</h2>
+<div class="product-grid reveal">
+    @foreach (var p in Model.MasCotizados)
+    {
+        <article class="card product">
+            <a asp-controller="Catalogo" asp-action="Detalle" asp-route-id="@p.Id" class="product-img">
+                @if (p.ImagenUrl is not null) { <img src="@p.ImagenUrl" alt="@p.Nombre" loading="lazy" /> }
+                else { <span>Imagen del producto</span> }
+            </a>
+            <h3 class="product-name">@p.Nombre</h3>
+            <p class="price">@Money.Fmt(p.Precio)</p>
+            <p class="stock">Añadido al carrito @p.VecesAgregadoCarrito veces</p>
+        </article>
+    }
+</div>
+
+<h2 class="section-title">Vistos recientemente</h2>
+@if (Model.Vistos.Count == 0)
+{
+    <p class="muted">Aún no ha visto productos. Explore el catálogo.</p>
+}
+else
+{
+    <div class="product-grid reveal">
+        @foreach (var p in Model.Vistos)
+        {
+            <article class="card product">
+                <a asp-controller="Catalogo" asp-action="Detalle" asp-route-id="@p.Id" class="product-img">
+                    @if (p.ImagenUrl is not null) { <img src="@p.ImagenUrl" alt="@p.Nombre" loading="lazy" /> }
+                    else { <span>Imagen del producto</span> }
+                </a>
+                <h3 class="product-name">@p.Nombre</h3>
+                <p class="price">@Money.Fmt(p.Precio)</p>
+            </article>
+        }
+    </div>
+}
+
+<section class="card reveal" style="margin-top:28px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap">
+    <div>
+        <h3>¿Necesita ayuda?</h3>
+        <p class="muted small" style="margin:0">Consulte las preguntas frecuentes o escriba a nuestro equipo.</p>
+    </div>
+    <a class="btn btn-outline" asp-controller="Soporte" asp-action="Chat">Chat en línea</a>
+</section>

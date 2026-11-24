@@ -1,0 +1,44 @@
+@model PerfilVm
+@{
+    ViewData["Title"] = "Mi perfil";
+}
+
+<section class="card" style="max-width:640px;margin:0 auto">
+    <h1>Mi perfil</h1>
+
+    <form asp-action="Perfil" method="post" novalidate>
+        <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+        <div class="grid-2">
+            <div class="field">
+                <label asp-for="Nombre">Nombre completo</label>
+                <input asp-for="Nombre" placeholder="Nombre" />
+                <span asp-validation-for="Nombre" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Apellidos">Apellidos</label>
+                <input asp-for="Apellidos" placeholder="Apellidos" />
+                <span asp-validation-for="Apellidos" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Telefono">Teléfono</label>
+                <input asp-for="Telefono" placeholder="8888-8888" />
+                <span asp-validation-for="Telefono" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Direccion">Dirección</label>
+                <input asp-for="Direccion" placeholder="Provincia, cantón, distrito" />
+                <span asp-validation-for="Direccion" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label>ID de usuario</label>
+                <input value="@Model.IdVisible" disabled />
+            </div>
+            <div class="field">
+                <label>Correo electrónico</label>
+                <input value="@Model.Email" disabled />
+            </div>
+        </div>
+        <p class="helper">El ID y el correo electrónico no se pueden modificar.</p>
+        <button type="submit" class="btn btn-brand btn-block">Guardar cambios</button>
+    </form>
+</section>

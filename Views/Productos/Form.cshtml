@@ -1,0 +1,59 @@
+@model ProductoFormVm
+@{
+    var esNuevo = Model.Id == 0;
+    ViewData["Title"] = esNuevo ? "Nuevo producto" : "Editar producto";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<section class="card" style="max-width:720px">
+    <form asp-action="@(esNuevo ? "Create" : "Edit")" method="post" novalidate>
+        <input type="hidden" asp-for="Id" />
+        <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
+        <div class="field">
+            <label asp-for="Nombre">Nombre</label>
+            <input asp-for="Nombre" />
+            <span asp-validation-for="Nombre" class="field-error"></span>
+        </div>
+        <div class="field">
+            <label asp-for="Descripcion">Descripción</label>
+            <textarea asp-for="Descripcion"></textarea>
+            <span asp-validation-for="Descripcion" class="field-error"></span>
+        </div>
+        <div class="grid-2">
+            <div class="field">
+                <label asp-for="Precio">Precio (₡)</label>
+                <input asp-for="Precio" type="number" step="1" min="1" />
+                <span asp-validation-for="Precio" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Stock">Stock</label>
+                <input asp-for="Stock" type="number" min="0" />
+                <span asp-validation-for="Stock" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="CategoriaId">Categoría</label>
+                <select asp-for="CategoriaId" asp-items="@((SelectList)ViewBag.Categorias)"></select>
+                <span asp-validation-for="CategoriaId" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="ProveedorId">Proveedor</label>
+                <select asp-for="ProveedorId" asp-items="@((SelectList)ViewBag.Proveedores)"></select>
+                <span asp-validation-for="ProveedorId" class="field-error"></span>
+            </div>
+        </div>
+        <div class="field">
+            <label asp-for="ImagenUrl">URL de imagen (opcional)</label>
+            <input asp-for="ImagenUrl" placeholder="/img/producto.jpg" />
+        </div>
+        <div class="field">
+            <label><input asp-for="Activo" type="checkbox" style="width:auto" /> Producto activo</label>
+        </div>
+
+        <div class="actions">
+            <button type="submit" class="btn btn-brand">Guardar</button>
+            <a class="btn btn-outline" asp-action="Index">Cancelar</a>
+        </div>
+    </form>
+</section>

@@ -1,0 +1,56 @@
+@model ChatStaffVm
+@{
+    ViewData["Title"] = "Centro de chat";
+}
+
+<h1>Centro de chat</h1>
+<p class="muted small">Conversaciones activas con clientes.</p>
+
+<div class="chat-layout" style="margin-top:14px">
+    <aside class="card">
+        <h2 class="h3">Conversaciones</h2>
+        @if (Model.Conversaciones.Count == 0)
+        {
+            <p class="muted small">Aún no hay mensajes de clientes.</p>
+        }
+        @foreach (var c in Model.Conversaciones)
+        {
+            <a class="conv @(c.ClienteId == Model.ClienteId ? "active" : "")" asp-action="Index" asp-route-clienteId="@c.ClienteId">
+                <strong>@c.Nombre</strong>
+                <span>@c.Ultimo · @c.Hora</span>
+            </a>
+        }
+    </aside>
+
+    <section class="card chat" style="max-width:none">
+        @if (Model.ClienteId is int cid)
+        {
+            <div id="chat-root" data-modo="personal" data-cliente-id="@cid" style="display:flex;flex-direction:column;flex:1">
+                <header class="chat-head">
+                    <strong>@Model.ClienteNombre</strong>
+                    <span class="muted small">Chat en línea</span>
+                </header>
+
+                <div id="chat-log" class="chat-log" aria-live="polite">
+                    @foreach (var m in Model.Mensajes)
+                    {
+                        <div class="bubble @(m.RemitenteId == User.UsuarioId() ? "own" : "other")">
+                            @m.Texto <small>@m.Nombre · @m.Hora</small>
+                        </div>
+                    }
+                </div>
+
+                <form id="chat-form" class="chat-form" autocomplete="off">
+                    <input id="chat-input" maxlength="1000" placeholder="Escriba su respuesta" aria-label="Mensaje" />
+                    <button type="submit" class="btn btn-brand">Enviar</button>
+                </form>
+            </div>
+        }
+        else
+        {
+            <div id="chat-root" data-modo="personal" data-cliente-id="" style="padding:24px">
+                <p class="muted">Seleccione una conversación para responder.</p>
+            </div>
+        }
+    </section>
+</div>

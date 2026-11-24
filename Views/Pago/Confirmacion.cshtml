@@ -1,0 +1,59 @@
+@model Factura
+@{
+    ViewData["Title"] = "Factura";
+    var pendiente = Model.Pago?.Estado == Estados.Pendiente;
+    var claseEstado = pendiente ? "warn" : "ok";
+}
+
+<div class="center" style="margin-bottom:18px">
+    <h1>@(pendiente ? "Pedido registrado" : "Compra confirmada")</h1>
+    <p class="muted small">Enviamos la factura y los detalles de entrega a su correo electrónico.</p>
+</div>
+
+<section class="card invoice" style="max-width:760px;margin:0 auto">
+    <div class="invoice-head">
+        <h2>Factura N.º @Model.Id.ToString("D6")</h2>
+        <span class="status @claseEstado">@Model.Pago?.Estado</span>
+    </div>
+
+    <div class="meta">
+        <div><small>Fecha</small>@Model.Fecha.ToString("dd/MM/yyyy")</div>
+        <div><small>Cliente</small>@Model.Usuario?.NombreCompleto</div>
+        <div><small>Método de pago</small>@Model.Pago?.Metodo</div>
+        <div><small>Entrega</small>@Model.Direccion</div>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th class="num">Cant.</th>
+                    <th class="num">Precio unitario</th>
+                    <th class="num">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var d in Model.Detalles)
+                {
+                    <tr>
+                        <td>@d.NombreProducto</td>
+                        <td class="num">@d.Cantidad</td>
+                        <td class="num">@Money.Fmt(d.PrecioUnitario)</td>
+                        <td class="num">@Money.Fmt(d.PrecioUnitario * d.Cantidad)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="totals">
+        <div class="sum-row"><span>Subtotal</span><span>@Money.Fmt(Model.Subtotal)</span></div>
+        <div class="sum-row"><span>Impuesto (13%)</span><span>@Money.Fmt(Model.Impuesto)</span></div>
+        <div class="sum-row total"><span>Total</span><span>@Money.Fmt(Model.Total)</span></div>
+    </div>
+</section>
+
+<div class="center" style="margin-top:22px">
+    <a class="btn btn-outline" asp-controller="Catalogo" asp-action="Index">Volver al catálogo</a>
+</div>

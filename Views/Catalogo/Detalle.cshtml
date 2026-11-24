@@ -1,0 +1,35 @@
+@model Producto
+@{
+    ViewData["Title"] = Model.Nombre;
+}
+
+<a class="back" asp-action="Index">← Volver al catálogo</a>
+
+<section class="card detail reveal">
+    <div class="detail-img">
+        @if (Model.ImagenUrl is not null)
+        {
+            <img src="@Model.ImagenUrl" alt="@Model.Nombre" />
+        }
+        else
+        {
+            <span>Imagen del producto</span>
+        }
+    </div>
+    <div>
+        <p class="tag">@Model.Categoria?.Nombre</p>
+        <h1>@Model.Nombre</h1>
+        <p class="muted">@Model.Descripcion</p>
+        <p class="price" style="font-size:1.3rem">@Money.Fmt(Model.Precio)</p>
+        <p class="stock @(Model.Stock == 0 ? "out" : Model.Stock <= Negocio.StockBajo ? "low" : "")">Stock disponible: @Model.Stock</p>
+
+        <form asp-action="AgregarAlCarrito" method="post" style="margin-top:18px">
+            <input type="hidden" name="productoId" value="@Model.Id" />
+            <div class="field" style="max-width:140px">
+                <label for="cantidad">Cantidad</label>
+                <input id="cantidad" type="number" name="cantidad" min="1" max="@Model.Stock" value="1" />
+            </div>
+            <button type="submit" class="btn btn-brand" disabled="@(Model.Stock == 0)">Añadir al carrito</button>
+        </form>
+    </div>
+</section>

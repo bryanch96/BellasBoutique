@@ -1,0 +1,50 @@
+@model RetroalimentacionVm
+@{
+    ViewData["Title"] = "Retroalimentación";
+}
+
+<h1>Retroalimentación de clientes</h1>
+
+<div class="tiles">
+    <div class="card tile"><div class="label">Calificación promedio</div><div class="value">@Model.Promedio.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) / 5</div></div>
+    <div class="card tile"><div class="label">Encuestas</div><div class="value">@Model.Encuestas.Count</div></div>
+    <div class="card tile"><div class="label">Sugerencias</div><div class="value">@Model.Sugerencias.Count</div></div>
+</div>
+
+<div class="grid-main">
+    <section class="card">
+        <h2 class="h3">Encuestas de satisfacción</h2>
+        @if (Model.Encuestas.Count == 0) { <p class="muted">Aún no hay encuestas.</p> }
+        else
+        {
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Fecha</th><th>Cliente</th><th class="num">Calificación</th><th>Comentarios</th></tr></thead>
+                    <tbody>
+                        @foreach (var e in Model.Encuestas)
+                        {
+                            <tr><td>@e.Fecha</td><td>@e.Usuario</td><td class="num">@e.Calificacion</td><td class="muted">@e.Texto</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </section>
+
+    <section class="card">
+        <h2 class="h3">Sugerencias</h2>
+        @if (Model.Sugerencias.Count == 0) { <p class="muted">Aún no hay sugerencias.</p> }
+        else
+        {
+            <ul class="list" style="display:block">
+                @foreach (var s in Model.Sugerencias)
+                {
+                    <li style="display:block">
+                        <strong class="small">@s.Usuario</strong> <span class="muted small">· @s.Fecha</span>
+                        <p style="margin:4px 0 0">@s.Texto</p>
+                    </li>
+                }
+            </ul>
+        }
+    </section>
+</div>

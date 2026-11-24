@@ -1,0 +1,29 @@
+@model List<MensajeVm>
+@{
+    ViewData["Title"] = "Chat en línea";
+}
+
+<h1 class="center">Soporte</h1>
+
+<div id="chat-root" data-modo="cliente" class="chat card">
+    <header class="chat-head">
+        <strong>Chat en línea</strong>
+        <span class="muted small">Atiende: Vendedor</span>
+    </header>
+
+    <div id="chat-log" class="chat-log" aria-live="polite">
+        @foreach (var m in Model)
+        {
+            <div class="bubble @(m.RemitenteId == User.UsuarioId() ? "own" : "other")">
+                @m.Texto <small>@m.Hora</small>
+            </div>
+        }
+    </div>
+
+    <form id="chat-form" class="chat-form" autocomplete="off">
+        <input id="chat-input" maxlength="1000" placeholder="Escriba su mensaje" aria-label="Mensaje" />
+        <button type="submit" class="btn btn-brand">Enviar</button>
+    </form>
+</div>
+
+<p class="center" style="margin-top:16px"><a asp-action="Index">← Volver a soporte</a></p>

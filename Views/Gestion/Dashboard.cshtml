@@ -1,0 +1,81 @@
+@model GestionDashboardVm
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="page-head">
+    <h1>Dashboard</h1>
+    <div class="actions">
+        <a class="btn btn-brand" asp-action="Reportes" asp-route-tipo="diario">Reporte diario</a>
+        <a class="btn btn-outline" asp-controller="Chat" asp-action="Index">Centro de chat</a>
+    </div>
+</div>
+
+<div class="tiles">
+    <div class="card tile"><div class="label">Productos vendidos</div><div class="value">@Model.UnidadesTotales</div></div>
+    <div class="card tile"><div class="label">Ingresos por ventas</div><div class="value">@Money.Fmt(Model.IngresosTotales)</div></div>
+    <div class="card tile"><div class="label">Productos activos</div><div class="value">@Model.ProductosActivos</div></div>
+    <div class="card tile"><div class="label">Stock bajo</div><div class="value">@Model.BajoStock.Count</div></div>
+</div>
+
+<div class="grid-main">
+    <section class="card">
+        <h2 class="h3">Unidades vendidas por producto</h2>
+        <canvas id="grafico" height="120" aria-label="Gráfico de unidades vendidas por producto"></canvas>
+    </section>
+
+    <section class="card">
+        <h2 class="h3">Productos estrella</h2>
+        <ul class="list">
+            @foreach (var r in Model.Ranking)
+            {
+                <li><span>@r.Nombre</span><span class="muted">@r.Unidades uds · @Money.Fmt(r.Ingresos)</span></li>
+            }
+        </ul>
+        <h2 class="h3" style="margin-top:22px">Menos vendidos</h2>
+        <ul class="list">
+            @foreach (var r in Model.MenosVendidos)
+            {
+                <li><span>@r.Nombre</span><span class="muted">@r.Unidades uds</span></li>
+            }
+        </ul>
+    </section>
+
+    <section class="card" style="grid-column:1 / -1">
+        <div class="page-head" style="margin-bottom:8px">
+            <h2 class="h3" style="margin:0">Próximos a agotarse</h2>
+            <a class="small" asp-controller="Productos" asp-action="Inventario">Ver inventario →</a>
+        </div>
+        @if (Model.BajoStock.Count == 0)
+        {
+            <p class="muted">No hay productos con stock bajo.</p>
+        }
+        else
+        {
+            <ul class="list">
+                @foreach (var p in Model.BajoStock)
+                {
+                    <li>
+                        <span>@p.Nombre</span>
+                        <span class="status @(p.Stock == 0 ? "out" : "low")">@(p.Stock == 0 ? "Agotado" : $"Quedan {p.Stock}")</span>
+                    </li>
+                }
+            </ul>
+        }
+    </section>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@@4.4.1/dist/chart.umd.min.js"></script>
+    <script>
+        (function () {
+            var labels = @Html.Raw(Model.GraficoLabels);
+            var datos = @Html.Raw(Model.GraficoDatos);
+            new Chart(document.getElementById('grafico'), {
+                type: 'bar',
+                data: { labels: labels, datasets: [{ label: 'Unidades vendidas', data: datos, backgroundColor: '#7B2D42', borderRadius: 6 }] },
+                options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+            });
+        })();
+    </script>
+}

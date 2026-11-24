@@ -1,0 +1,59 @@
+@model CarritoVm
+@{
+    ViewData["Title"] = "Carrito";
+}
+
+<h1>Carrito de compras</h1>
+
+@if (Model.Vacio)
+{
+    <section class="card">
+        <p>Su carrito está vacío.</p>
+        <a class="btn btn-outline" asp-controller="Catalogo" asp-action="Index">Ir al catálogo</a>
+    </section>
+}
+else
+{
+    <div class="two-col">
+        <section class="card">
+            @foreach (var item in Model.Items)
+            {
+                <div class="cart-row">
+                    <div class="thumb">
+                        @if (item.Producto!.ImagenUrl is not null)
+                        {
+                            <img src="@item.Producto.ImagenUrl" alt="@item.Producto.Nombre" />
+                        }
+                        else
+                        {
+                            <span>Imagen</span>
+                        }
+                    </div>
+                    <div>
+                        <strong>@item.Producto.Nombre</strong>
+                        <div class="muted small">Precio unitario: @Money.Fmt(item.Producto.Precio)</div>
+                    </div>
+                    <form asp-action="Actualizar" method="post" class="qty">
+                        <input type="hidden" name="itemId" value="@item.Id" />
+                        <button type="submit" name="cantidad" value="@(item.Cantidad - 1)" class="qty-btn" aria-label="Disminuir">−</button>
+                        <span>@item.Cantidad</span>
+                        <button type="submit" name="cantidad" value="@(item.Cantidad + 1)" class="qty-btn" aria-label="Aumentar" disabled="@(item.Cantidad >= item.Producto.Stock)">+</button>
+                    </form>
+                    <strong class="line-total">@Money.Fmt(item.Producto.Precio * item.Cantidad)</strong>
+                    <form asp-action="Quitar" method="post">
+                        <input type="hidden" name="itemId" value="@item.Id" />
+                        <button type="submit" class="link-btn small">Quitar</button>
+                    </form>
+                </div>
+            }
+        </section>
+
+        <aside class="card">
+            <h2>Resumen del pedido</h2>
+            <div class="sum-row"><span>Subtotal</span><span>@Money.Fmt(Model.Subtotal)</span></div>
+            <div class="sum-row"><span>Impuesto (13%)</span><span>@Money.Fmt(Model.Impuesto)</span></div>
+            <div class="sum-row total"><span>Total</span><span>@Money.Fmt(Model.Total)</span></div>
+            <a class="btn btn-brand btn-block" style="margin-top:14px" asp-controller="Pago" asp-action="Index">Continuar al pago</a>
+        </aside>
+    </div>
+}
